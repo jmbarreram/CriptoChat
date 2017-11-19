@@ -1,9 +1,23 @@
 from django.shortcuts import render
 from django.contrib.auth import authenticate, logout, login
+from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from chat_app import settings
 
 from .models import Chat
+
+def Create_User(request):
+    next = request.GET.get('next', '/login/')
+    if request.method == "POST":
+        username = request.POST['username']
+        email = request.POST['email']
+        password = request.POST['password']
+        if username is not None and email is not None and password is not None:
+            user = User.objects.create_user(username,email,password)
+            user.save()
+            return HttpResponseRedirect('/login/')
+        return HttpResponse("User, email or password missing.")
+    return render(request, "alpha/create_user.html", {'next': next})
 
 def Login(request):
     next = request.GET.get('next', '/home/')
