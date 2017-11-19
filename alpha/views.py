@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth import authenticate, logout, login
 from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from chat_app import settings
 
@@ -13,6 +14,7 @@ def Create_User(request):
         email = request.POST['email']
         password = request.POST['password']
         if username is not None and email is not None and password is not None:
+            password = username+password
             user = User.objects.create_user(username,email,password)
             user.save()
             return HttpResponseRedirect('/login/')
@@ -24,6 +26,7 @@ def Login(request):
     if request.method == "POST":
         username = request.POST['username']
         password = request.POST['password']
+        password = username+password
         user = authenticate(username=username, password=password)
 
         if user is not None:
